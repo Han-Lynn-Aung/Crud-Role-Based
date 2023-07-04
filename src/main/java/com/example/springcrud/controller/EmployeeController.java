@@ -1,4 +1,4 @@
-package com.example.springcrud;
+package com.example.springcrud.controller;
 
 import com.example.springcrud.model.Employee;
 import com.example.springcrud.repository.EmployeeRepo;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -15,57 +16,42 @@ import java.util.List;
 public class EmployeeController {
 
     @Autowired
-    private EmployeeService service
+    private EmployeeService service;
 
 
-    @RequestMapping("/list")
+    @RequestMapping("/employee-list")
     private String viewHomePage(Model model) {
-        List<Employee> employees = e.findAll();
+        List<Employee> employees = service.listEmployee();
         model.addAttribute("employees", employees);
         return "employee-list";
     }
 
-    @GetMapping("/create")
+    @RequestMapping("/new")
     private String showCreateForm(Model model) {
         model.addAttribute("employee", new Employee());
         return "employee-form";
     }
 
-    @PostMapping("/create")
-    private String createEmployee(@Valid @ModelAttribute("employee") Employee employee, BindingResult bindingResult) {
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    private String saveEmployee(@ModelAttribute("employee") Employee employee, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "employee-form";
         }
-        employeeRepository.save(employee);
-        return "redirect:/employees";
+        service.saveEmployee(employee);
+        return "redirect:/employee-list";
     }
 
-    @GetMapping("/edit/{id}")
-    private String showEditForm(@PathVariable("id") long id, Model model) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid employee id: " + id));
-
-        model.addAttribute("employee", employee);
-        return "employee-form";
+    @RequestMapping("/edit/{id}")
+    private ModelAndView showEditEmployeeForm(@PathVariable(name = "id") long id) {
+        ModelAndView mav = new ModelAndView("employee-edit");
+        Employee employee = service.getEmployee(id);
+        mav.addObject("employee", employee);
+        return mav;
     }
-
-    @PostMapping("/edit/{id}")
-    private String updateEmployee(@PathVariable("id") long id,@Valid @ModelAttribute("employee") Employee employee,
-                                  BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return "employee-form";
-        }
-
-        employee.setId(id);
-        employeeRepository.save(employee);
-        return "redirect:/api/employees/";
-    }
-
-    @GetMapping("/delete/{id}")
+    @RequestMapping("/delete/{id}")
     private String deleteEmployee(@PathVariable("id") long id) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid employee id: " + id));
-        employeeRepository.delete(employee);
-        return "redirect:/api/employees/";
+        Employee employee = service.getEmployee(id);
+        service.deleteEmployee(id);
+        return "redirect:/employee-list";
     }
+}

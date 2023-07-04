@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:th="http:///www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>For User</title>
 </head>
 <body>
-
+    <h1>Welcome For User</h1>
+    <a th:href="@{/employee-list}" class="btn btn-primary btn-sm" >Go to Employee List</a>
+</div>
 </body>
 </html>

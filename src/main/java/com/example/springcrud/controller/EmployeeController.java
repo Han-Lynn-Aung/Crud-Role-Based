@@ -1,7 +1,6 @@
 package com.example.springcrud.controller;
 
 import com.example.springcrud.model.Employee;
-import com.example.springcrud.repository.EmployeeRepo;
 import com.example.springcrud.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
